@@ -1,0 +1,30 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build outputs (publish installers separately as GitHub Release assets)
+/dist/
+/build/
+*.egg-info/
+
+# Local connection settings and credentials
+.env
+.env.*
+!.env.example
+config.json
+.config/
+*.pfx
+*.p12
+*.key
+
+# Local editor settings and logs
+.idea/
+.vscode/
+*.log
+Thumbs.db
+Desktop.ini

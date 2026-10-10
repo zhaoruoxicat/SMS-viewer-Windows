@@ -1,6 +1,7 @@
-# Windows 安装包
+# SMS Viewer Windows
 
-应用源码保持不变。使用 Python 3.14 + PyInstaller 收集应用及 PySide6，
+Windows 短信会话客户端，连接现有 PHP 短信转发服务器，支持自动刷新、分页和验证码复制。
+本项目独立维护 Windows 版本。使用 Python 3.14 + PyInstaller 收集应用及 PySide6，
 再通过 Inno Setup 6 生成 Windows 10/11 x64 安装程序。
 
 安装包：`dist/sms-forward-client-1.0.3-windows-x64-setup.exe`。
@@ -14,9 +15,11 @@
 
 ## 重新构建
 
-安装 Python 3.14 x64 和 Inno Setup 6，然后在项目根目录执行：
+安装 Python 3.14 x64 和 Inno Setup 6，然后执行：
 
 ```powershell
+git clone https://github.com/zhaoruoxicat/SMS-viewer-Windows.git
+cd SMS-viewer-Windows
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip install pyinstaller==6.21.0 pillow==12.3.0
@@ -34,18 +37,22 @@ Python 3.14 提供应用需要的 Windows `os.fchmod` 支持，不要使用更�
 ## 测试说明
 
 原有测试可通过 `.\.venv\Scripts\python.exe -m unittest discover -s tests -v` 运行。
-Linux 权限位断言不适用于 Windows；Debian 打包测试需要 `dpkg-deb`。
-Windows 上配置的保存读取由安装包烟雾测试另外验证。
+现有核心测试包含 Linux 权限位断言，在 Windows 上该断言会失败。
+Windows 上配置的保存读取可通过安装包烟雾测试另外验证：
+
+```powershell
+.\.venv\Scripts\python.exe packaging\verify_windows.py dist\sms-forward-client-1.0.3-windows-x64-setup.exe
+```
+
+烟雾测试会临时安装应用、连接本机测试接口并卸载；如已安装同一应用，测试会拒绝覆盖。
 
 ## 上传 GitHub 的文件
 
-Windows 与 Ubuntu 共享 `sms_client/` 源码。建议在当前仓库一并维护两种平台，
-新增 Windows 打包文件即可，不必移除已经跟踪的 Ubuntu 文件。
-
-如果单独建立 Windows 仓库，至少复制以下文件，并保留目录结构：
+本仓库包含以下源码、构建文件和测试：
 
 ```text
 .gitignore
+README.md
 requirements.txt
 logo.png
 sms_client/                  # 全部 .py 源文件，不含 __pycache__
@@ -53,14 +60,11 @@ build_windows.ps1
 packaging/windows_entry.py
 packaging/windows.iss
 packaging/verify_windows.py
-packaging/README-windows.md
 tests/test_core.py
 tests/test_app.py
 ```
 
-独立仓库可将本说明复制为根目录 `README.md`。
-Ubuntu 的 `build_deb.py`、`run.sh`、`install-desktop.sh`、
-`tests/test_packaging.py` 不是 Windows 构建所必需的。
+Ubuntu 的构建脚本和 Debian 打包测试不包含在本仓库中。
 
 不要上传 `.venv/`、`build/`、`dist/`、`__pycache__/` 或真实 `config.json`。
 安装包 `.exe` 及其 `.sha256` 校验文件可作为 GitHub Release 附件分发。
